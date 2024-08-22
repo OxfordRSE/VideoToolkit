@@ -1,0 +1,44 @@
+name: "Test package"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    name: Tests example and packaging
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: "ubuntu-24.04"
+            python: "3.10"
+            deps: "sudo apt update && sudo apt install -y ghostscript imagemagick"
+          - os: "macos-14"
+            python: "3.11"
+            deps: "brew install ghostscript imagemagick"
+          - os: "windows-2022"
+            python: "3.12"
+            deps: "choco install ghostscript imagemagick -y"
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: install python package
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install .[dev]
+
+      - name: run pytest
+        run: |
+          pytest
