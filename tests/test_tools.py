@@ -27,3 +27,7 @@ def test_create_start_slide():
 def test_create_end_slide():
     """Placeholder test for create_end_slide"""
     assert True  # Replace with real test later
+
+
+def test_magick_command():
+    assert videotoolkit.MAGICK_COMMAND == 'magick' or videotoolkit.MAGICK_COMMAND == 'convert'

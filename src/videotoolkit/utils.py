@@ -12,6 +12,8 @@ import logging
 import sys
 import subprocess
 
+import videotoolkit
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,6 +55,10 @@ def draw_hexagon(c: canvas.Canvas, x: float, y: float, size: float):
 
 def pdf_to_png(pdf_path: str | Path) -> None:
 
+    if not videotoolkit.MAGICK_COMMAND:
+        logger.error(f'ImageMagick not found; required for {__name__}')
+        sys.exit(1)
+
     if isinstance(pdf_path, str):
         pdf_path = Path(pdf_path)
 
@@ -70,7 +76,7 @@ def pdf_to_png(pdf_path: str | Path) -> None:
     try:
         # Construct the command to call ImageMagick's convert
         command = [
-            'magick',
+            videotoolkit.MAGICK_COMMAND,
             '-density', '72',
             str(pdf_path),
             str(png_path)
