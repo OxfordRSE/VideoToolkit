@@ -6,6 +6,13 @@
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from math import cos, sin, radians
+from pathlib import Path
+
+import logging
+import sys
+import subprocess
+
+logger = logging.getLogger(__name__)
 
 
 def add_logo(c: canvas.Canvas, logo_path: str, x: float, y: float, width: float, height: float):
@@ -42,3 +49,40 @@ def draw_hexagon(c: canvas.Canvas, x: float, y: float, size: float):
 
     # Draw the hexagon
     c.lines(linelist)
+
+
+def pdf_to_png(pdf_path: str | Path) -> None:
+
+    if isinstance(pdf_path, str):
+        pdf_path = Path(pdf_path)
+
+    pdf_path = pdf_path.resolve()
+
+    if not pdf_path.is_file():
+        logger.error(f'Path {pdf_path} is not a file. Expected a PDF file.')
+        sys.exit(1)
+
+    if pdf_path.suffix != '.pdf':
+        logger.error(f'File {pdf_path} is not a PDF file.')
+
+    png_path = pdf_path.with_suffix('.png')
+
+    try:
+        # Construct the command to call ImageMagick's convert
+        command = [
+            'magick',
+            '-density', '72',
+            str(pdf_path),
+            str(png_path)
+        ]
+
+        # Execute the command
+        subprocess.run(command, check=True)
+        logger.info(f'Successfully converted {pdf_path} to {png_path}')
+
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+    except FileNotFoundError:
+        print("ImageMagick's convert command was not found. Make sure it is installed and accessible.")
+
+

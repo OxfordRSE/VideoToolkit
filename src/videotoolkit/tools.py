@@ -10,8 +10,10 @@ from .utils import add_logo, generate_hex_grid
 
 def create_start_slide(filename: str, title: str, subtitle: str):
     """Creates a PDF start slide with the given title and subtitle."""
-    c = canvas.Canvas(filename, pagesize=A4)
-    width, height = A4
+    # Define the dimensions for a 16:9 aspect ratio
+    width, height = 3840, 2160
+    # Create a canvas with the specified dimensions
+    c = canvas.Canvas(filename, pagesize=(width, height))
 
     # Draw background grid
     generate_hex_grid(c, width, height)
