@@ -7,8 +7,13 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from .utils import add_logo, generate_hex_grid
 
+from pathlib import Path
+import logging
 
-def create_start_slide(filename: str, title: str, subtitle: str):
+logger = logging.getLogger(__name__)
+
+
+def create_start_slide(filename: str | Path, title: str, subtitle: str):
     """Creates a PDF start slide with the given title and subtitle."""
     # Define the dimensions for a 16:9 aspect ratio
     width, height = 3840, 2160
@@ -28,6 +33,7 @@ def create_start_slide(filename: str, title: str, subtitle: str):
     # Save PDF
     c.showPage()
     c.save()
+    logger.info(f'Saved {filename}')
 
 
 def create_end_slide(filename: str, message: str):
