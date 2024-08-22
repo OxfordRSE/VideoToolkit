@@ -30,6 +30,9 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v4
 
+      - name: install deps
+        run: ${{ matrix.deps }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
